@@ -1,0 +1,98 @@
+/* ========================================
+   HANDPLAY — Analytics Styles
+   ======================================== */
+
+.analytics-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.analytics-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.analytics-stat {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  text-align: center;
+}
+
+.analytics-stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  margin-bottom: 2px;
+}
+
+.analytics-stat-label {
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Heatmap */
+.analytics-heatmap {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+}
+
+.heatmap-cell {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+  min-height: 16px;
+}
+
+.heatmap-cell:hover {
+  transform: scale(1.3);
+  z-index: 1;
+}
+
+/* Bar chart */
+.analytics-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Table */
+.analytics-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.analytics-row {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 12px;
+  border-radius: 4px;
+  transition: background var(--transition-fast);
+}
+
+.analytics-row:hover {
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.analytics-row-header {
+  color: var(--text-dim);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+}
+
+.analytics-row-header:hover {
+  background: transparent;
+}

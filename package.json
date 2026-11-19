@@ -1,0 +1,15 @@
+{
+  "name": "handplay",
+  "version": "1.0.0",
+  "description": "Gesture Controlled Computer Vision Mini Games",
+  "main": "electron/main.js",
+  "author": "Erick de S.C. Araújo + IA",
+  "copyright": "© Erick de S.C. Araújo + IA",
+  "license": "MIT",
+  "repository": {
+    "type": "git"
+  },
+  "dependencies": {
+    "@mediapipe/tasks-vision": "^1.0.1"
+  }
+}

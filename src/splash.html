@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline';">
+  <title>HandPlay</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      overflow: hidden;
+      -webkit-app-region: drag;
+      user-select: none;
+    }
+
+    .splash-container {
+      width: 460px;
+      height: 300px;
+      background: linear-gradient(145deg, #0d0d2b, #1a1a3e);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 0 60px rgba(99, 102, 241, 0.3),
+        0 20px 40px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      position: relative;
+    }
+
+    .splash-container::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #6366f1, transparent);
+      border-radius: 1px;
+    }
+
+    .logo-icon {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .logo-icon svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.5));
+    }
+
+    .hand-pulse {
+      animation: handPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes handPulse {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.05); opacity: 1; }
+    }
+
+    .title {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 50%, #6366f1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      color: rgba(165, 180, 252, 0.7);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .developer {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 11px;
+      color: rgba(165, 180, 252, 0.5);
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+    }
+
+    .loading-bar-container {
+      width: 200px;
+      height: 3px;
+      background: rgba(99, 102, 241, 0.15);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .loading-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #6366f1, #a5b4fc);
+      border-radius: 2px;
+      animation: loadingProgress 1.4s ease-out forwards;
+    }
+
+    @keyframes loadingProgress {
+      0% { width: 0%; }
+      30% { width: 40%; }
+      60% { width: 70%; }
+      100% { width: 100%; }
+    }
+
+    .loading-text {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 11px;
+      color: rgba(165, 180, 252, 0.6);
+      letter-spacing: 2px;
+      animation: fadeInOut 1.4s ease-in-out;
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; }
+      20% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { opacity: 0.7; }
+    }
+  </style>
+</head>
+<body>
+  <div class="splash-container">
+    <div class="logo-icon hand-pulse">
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="handGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#a5b4fc"/>
+            <stop offset="100%" style="stop-color:#6366f1"/>
+          </linearGradient>
+          <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#6366f1"/>
+            <stop offset="100%" style="stop-color:#818cf8"/>
+          </linearGradient>
+        </defs>
+        <!-- Hand outline -->
+        <path d="M32 8 C28 8 25 12 25 18 L25 28 L20 22 C18 20 15 21 14 23 C13 25 14 28 16 30 L16 44 C16 50 20 54 26 56 L38 56 C44 54 48 50 48 44 L48 26 C48 24 47 22 45 21 C43 20 42 22 40 25 L37 30 L37 18 C37 12 34 8 32 8 Z" 
+              fill="url(#handGrad)" opacity="0.9"/>
+        <!-- Fingertips dots -->
+        <circle cx="25" cy="12" r="2.5" fill="#c7d2fe" opacity="0.8"/>
+        <circle cx="32" cy="8" r="2.5" fill="#c7d2fe" opacity="0.8"/>
+        <circle cx="16" cy="26" r="2.5" fill="#c7d2fe" opacity="0.8"/>
+        <circle cx="48" cy="24" r="2.5" fill="#c7d2fe" opacity="0.8"/>
+        <!-- Center glow -->
+        <circle cx="32" cy="32" r="4" fill="url(#glowGrad)" opacity="0.6">
+          <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.6;0.9;0.6" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <!-- Tech circles -->
+        <circle cx="32" cy="32" r="28" stroke="#6366f1" stroke-width="0.5" fill="none" opacity="0.3">
+          <animateTransform attributeName="transform" type="rotate" values="0 32 32;360 32 32" dur="8s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="32" cy="32" r="22" stroke="#a5b4fc" stroke-width="0.3" fill="none" opacity="0.2" stroke-dasharray="4 4">
+          <animateTransform attributeName="transform" type="rotate" values="360 32 32;0 32 32" dur="12s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
+    <div class="title">HANDPLAY</div>
+    <div class="subtitle">Trò chơi Điều khiển bằng Cử chỉ Tay</div>
+    <div class="developer">Phát triển bởi Erick de S.C. Araújo + IA</div>
+    <div class="loading-bar-container">
+      <div class="loading-bar"></div>
+    </div>
+    <div class="loading-text">Đang tải trò chơi...</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' file:; media-src 'self' file:; connect-src 'self' blob: file:; worker-src 'self' blob:; img-src 'self' data: blob: file:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' file:;">
+  <title>HandPlay - Game Điều Khiển Bằng Cử Chỉ Tay</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/menu.css">
+  <link rel="stylesheet" href="css/games.css">
+  <link rel="stylesheet" href="css/leaderboard.css">
+  <link rel="stylesheet" href="css/analytics.css">
+  <link rel="stylesheet" href="css/camera-preview.css">
+</head>
+<body>
+  <!-- Hidden video for webcam -->
+  <video id="webcam-video" autoplay playsinline muted style="visibility:hidden; position:fixed; top:0; left:0; width:1px; height:1px;"></video>
+
+  <!-- Main canvas layers -->
+  <canvas id="camera-canvas" class="game-canvas"></canvas>
+  <canvas id="hand-canvas" class="game-canvas"></canvas>
+  <canvas id="game-canvas" class="game-canvas"></canvas>
+  <canvas id="cursor-canvas" class="game-canvas" style="pointer-events:none;"></canvas>
+
+  <!-- Virtual cursor indicator -->
+  <div id="virtual-cursor" class="virtual-cursor hidden">
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+  </div>
+
+  <!-- ==================== SCREENS ==================== -->
+
+  <!-- Main Menu -->
+  <div id="screen-menu" class="screen active">
+    <div class="menu-container">
+      <div class="menu-logo">
+        <div class="menu-logo-icon">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="menuHandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#a5b4fc"/>
+                <stop offset="100%" style="stop-color:#6366f1"/>
+              </linearGradient>
+            </defs>
+            <path d="M32 8 C28 8 25 12 25 18 L25 28 L20 22 C18 20 15 21 14 23 C13 25 14 28 16 30 L16 44 C16 50 20 54 26 56 L38 56 C44 54 48 50 48 44 L48 26 C48 24 47 22 45 21 C43 20 42 22 40 25 L37 30 L37 18 C37 12 34 8 32 8 Z" fill="url(#menuHandGrad)" opacity="0.9"/>
+            <circle cx="25" cy="12" r="2.5" fill="#c7d2fe" opacity="0.8"/>
+            <circle cx="32" cy="8" r="2.5" fill="#c7d2fe" opacity="0.8"/>
+            <circle cx="16" cy="26" r="2.5" fill="#c7d2fe" opacity="0.8"/>
+            <circle cx="48" cy="24" r="2.5" fill="#c7d2fe" opacity="0.8"/>
+            <circle cx="32" cy="32" r="4" fill="#6366f1" opacity="0.6"/>
+          </svg>
+        </div>
+        <h1 class="menu-title">HANDPLAY</h1>
+        <p class="menu-subtitle">Trò chơi Điều khiển bằng Cử chỉ Tay</p>
+      </div>
+      <div class="menu-buttons">
+        <button class="menu-btn" data-screen="games" data-gesture-hover="true">
+          <span class="menu-btn-icon">🎮</span>
+          <span class="menu-btn-text">CHƠI NGAY</span>
+        </button>
+        <button class="menu-btn" data-screen="training" data-gesture-hover="true">
+          <span class="menu-btn-icon">✋</span>
+          <span class="menu-btn-text">LUYỆN TẬP</span>
+        </button>
+        <button class="menu-btn" data-screen="records" data-gesture-hover="true">
+          <span class="menu-btn-icon">🏆</span>
+          <span class="menu-btn-text">KỶ LỤC</span>
+        </button>
+        <button class="menu-btn" data-screen="analytics" data-gesture-hover="true">
+          <span class="menu-btn-icon">📊</span>
+          <span class="menu-btn-text">THỐNG KÊ</span>
+        </button>
+        <button class="menu-btn" data-screen="achievements" data-gesture-hover="true">
+          <span class="menu-btn-icon">🏅</span>
+          <span class="menu-btn-text">THÀNH TỰU</span>
+        </button>
+        <button class="menu-btn" data-screen="settings" data-gesture-hover="true">
+          <span class="menu-btn-icon">⚙️</span>
+          <span class="menu-btn-text">CÀI ĐẶT</span>
+        </button>
+        <button class="menu-btn" data-screen="tracking-lab" data-gesture-hover="true">
+          <span class="menu-btn-icon">🔬</span>
+          <span class="menu-btn-text">PHÒNG THỬ NGHIỆM</span>
+        </button>
+        <button class="menu-btn menu-btn-exit" data-action="exit" data-gesture-hover="true">
+          <span class="menu-btn-icon">✕</span>
+          <span class="menu-btn-text">THOÁT</span>
+        </button>
+      </div>
+      <div class="menu-footer">
+        <button class="menu-footer-btn" id="btn-menu-fullscreen" title="Bật/Tắt Toàn màn hình (F)">
+          <span>⛶</span> <span style="font-size: 11px;">Toàn màn hình</span>
+        </button>
+        <span class="privacy-text">🔒 Camera được xử lý cục bộ trên máy. Không có dữ liệu nào gửi lên máy chủ.</span>
+        <span class="dev-text">Developed by Erick de S.C. Araújo + IA</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Selection -->
+  <div id="screen-games" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" data-screen="menu">← Quay lại</button>
+      <h2 class="screen-title">Chọn Trò Chơi</h2>
+      <div></div>
+    </div>
+    <div class="games-grid" id="games-grid">
+      <!-- Games populated by JS -->
+    </div>
+  </div>
+
+  <!-- Active Game Screen -->
+  <div id="screen-game" class="screen">
+    <div class="game-hud" id="game-hud">
+      <div class="hud-left">
+        <button class="hud-btn" id="btn-pause">⏸</button>
+        <span class="hud-score" id="hud-score">Điểm: 0</span>
+      </div>
+      <div class="hud-center">
+        <span class="hud-title" id="hud-title"></span>
+      </div>
+      <div class="hud-right">
+        <span class="hud-timer" id="hud-timer"></span>
+        <button class="hud-btn" id="btn-fullscreen" title="Toàn màn hình (F)">⛶</button>
+        <button class="hud-btn" id="btn-back-game">✕</button>
+      </div>
+    </div>
+    <div id="game-overlay" class="game-overlay hidden">
+      <div class="overlay-content" id="overlay-content"></div>
+    </div>
+  </div>
+
+  <!-- Training Screen -->
+  <div id="screen-training" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" data-screen="menu">← Quay lại</button>
+      <h2 class="screen-title">Luyện Tập Cử Chỉ</h2>
+      <div></div>
+    </div>
+    <div class="training-container">
+      <div class="training-area">
+        <div class="training-gesture-display" id="training-gesture-display">
+          <div class="gesture-icon" id="gesture-demo-icon">☝️</div>
+          <div class="gesture-name" id="gesture-demo-name">CHỈ TAY</div>
+        </div>
+        <div class="training-status" id="training-status">Đưa bàn tay của bạn trước camera</div>
+        <div class="training-detected" id="training-detected">
+          <span class="checkmark hidden" id="gesture-check">✓</span>
+          <span id="detected-gesture-text">ĐÃ NHẬN DIỆN CỬ CHỈ</span>
+        </div>
+      </div>
+      <div class="training-poses">
+        <button class="pose-btn active" data-gesture="point">
+          <span class="pose-icon">☝️</span>
+          <span class="pose-label">CHỈ TAY</span>
+        </button>
+        <button class="pose-btn" data-gesture="pinch">
+          <span class="pose-icon">🤏</span>
+          <span class="pose-label">CHỤM NGÓN</span>
+        </button>
+        <button class="pose-btn" data-gesture="fist">
+          <span class="pose-icon">✊</span>
+          <span class="pose-label">NẮM TAY</span>
+        </button>
+        <button class="pose-btn" data-gesture="open">
+          <span class="pose-icon">🖐️</span>
+          <span class="pose-label">XÒE TAY</span>
+        </button>
+        <button class="pose-btn" data-gesture="swipe-left">
+          <span class="pose-icon">👈</span>
+          <span class="pose-label">VUỐT TRÁI ←</span>
+        </button>
+        <button class="pose-btn" data-gesture="swipe-right">
+          <span class="pose-icon">👉</span>
+          <span class="pose-label">VUỐT PHẢI →</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Records / Leaderboard Screen -->
+  <div id="screen-records" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" data-screen="menu">← Quay lại</button>
+      <h2 class="screen-title">Bảng Xếp Hạng</h2>
+      <div></div>
+    </div>
+    <div class="records-container" id="records-container">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- Settings Screen -->
+  <div id="screen-settings" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" data-screen="menu">← Quay lại</button>
+      <h2 class="screen-title">Cài Đặt</h2>
+      <div></div>
+    </div>
+    <div class="settings-container">
+      <div class="settings-tabs">
+        <button class="settings-tab active" data-tab="themes">🎨 Giao diện</button>
+        <button class="settings-tab" data-tab="camera">📷 Camera</button>
+        <button class="settings-tab" data-tab="graphics">🖥️ Đồ họa</button>
+        <button class="settings-tab" data-tab="audio">🔊 Âm thanh</button>
+        <button class="settings-tab" data-tab="gestures">✋ Cử chỉ</button>
+        <button class="settings-tab" data-tab="performance">⚡ Hiệu năng</button>
+        <button class="settings-tab" data-tab="backup">💾 Sao lưu</button>
+        <button class="settings-tab" data-tab="about">ℹ️ Giới thiệu</button>
+      </div>
+      <div class="settings-panel" id="settings-panel">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Achievements Screen -->
+  <div id="screen-achievements" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" data-screen="menu">← Quay lại</button>
+      <h2 class="screen-title">Thành Tựu</h2>
+      <div></div>
+    </div>
+    <div class="records-container" id="achievements-container">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- Analytics Screen -->
+  <div id="screen-analytics" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" data-screen="menu">← Quay lại</button>
+      <h2 class="screen-title">Thống Kê</h2>
+      <div></div>
+    </div>
+    <div class="records-container" id="analytics-container">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- Tracking Lab -->
+  <div id="screen-tracking-lab" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" data-screen="menu">← Quay lại</button>
+      <h2 class="screen-title">Phòng Thử Nghiệm Cử Chỉ</h2>
+      <div></div>
+    </div>
+    <div class="tracking-lab-container">
+      <div class="lab-stats" id="lab-stats">
+        <div class="stat-row"><span class="stat-label">FPS:</span><span class="stat-value" id="stat-fps">0</span></div>
+        <div class="stat-row"><span class="stat-label">Độ trễ:</span><span class="stat-value" id="stat-latency">0ms</span></div>
+        <div class="stat-row"><span class="stat-label">Số bàn tay:</span><span class="stat-value" id="stat-hands">0</span></div>
+        <div class="stat-row"><span class="stat-label">Độ tin cậy:</span><span class="stat-value" id="stat-confidence">0%</span></div>
+        <div class="stat-row"><span class="stat-label">Độ phân giải:</span><span class="stat-value" id="stat-camera-res">-</span></div>
+        <div class="stat-row"><span class="stat-label">Nền tảng:</span><span class="stat-value" id="stat-backend">MediaPipe</span></div>
+        <div class="stat-row"><span class="stat-label">Thời gian xử lý:</span><span class="stat-value" id="stat-inference">0ms</span></div>
+      </div>
+      <div class="lab-controls">
+        <label class="lab-toggle"><input type="checkbox" id="show-landmarks" checked> Hiện điểm mốc tay</label>
+        <label class="lab-toggle"><input type="checkbox" id="show-connections" checked> Hiện khớp ngón tay</label>
+        <label class="lab-toggle"><input type="checkbox" id="show-bbox"> Hiện khung bao tay</label>
+        <label class="lab-toggle"><input type="checkbox" id="show-trajectory"> Hiện vệt chuyển động</label>
+        <label class="lab-toggle"><input type="checkbox" id="show-gesture-label" checked> Hiện tên cử chỉ</label>
+        <label class="lab-toggle"><input type="checkbox" id="show-debug"> Hiện thông số gỡ lỗi</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Camera permission overlay -->
+  <div id="camera-overlay" class="screen-overlay hidden">
+    <div class="camera-permission-box">
+      <div class="cam-icon">📷</div>
+      <h3>Yêu Cầu Quyền Truy Cập Camera</h3>
+      <p>HandPlay cần quyền truy cập webcam để nhận diện các cử chỉ bàn tay của bạn.</p>
+      <p class="cam-privacy">🔒 Camera được xử lý cục bộ trên máy. Không có hình ảnh nào gửi ra ngoài.</p>
+      <button class="btn-primary" id="btn-request-camera">Bật Camera</button>
+      <p class="cam-error hidden" id="camera-error-msg"></p>
+    </div>
+  </div>
+
+  <!-- Keyboard shortcuts overlay (shown when no camera) -->
+  <div id="fallback-help" class="screen-overlay hidden">
+    <div class="camera-permission-box" style="max-width: 420px;">
+      <div class="cam-icon">⌨️</div>
+      <h3>Chế Độ Bàn Phím & Chuột</h3>
+      <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 16px;">Không tìm thấy camera. Bạn có thể dùng chuột và bàn phím để chơi.</p>
+      <div style="text-align: left; font-size: 13px; color: var(--text-secondary); line-height: 2;">
+        <div><b>Chuột</b> — Di chuyển con trỏ</div>
+        <div><b>Click chuột</b> — Chụm ngón / Chọn</div>
+        <div><b>Phím mũi tên / WASD</b> — Cử chỉ vuốt</div>
+        <div><b>Phím cách / Enter</b> — Xác nhận</div>
+        <div><b>Phím Escape</b> — Tạm dừng</div>
+        <div><b>Phím F</b> — Toàn màn hình</div>
+      </div>
+      <div style="margin-top: 16px; display: flex; gap: 10px; justify-content: center;">
+        <button class="btn-primary" id="btn-fallback-continue" style="font-size: 14px; padding: 10px 24px;">Tiếp tục</button>
+        <button class="btn-primary" id="btn-fallback-retry" style="font-size: 14px; padding: 10px 24px; background: transparent; border: 1px solid var(--border-subtle); color: var(--text-secondary);">Thử lại Camera</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts loaded in order -->
+  <script src="js/combo-popups.js"></script>
+  <script src="js/particles.js"></script>
+  <script src="js/transitions.js"></script>
+  <script src="js/themes.js"></script>
+  <script src="js/tutorial.js"></script>
+  <script src="js/leaderboard.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/gesture-remapping.js"></script>
+  <script src="js/camera-preview.js"></script>
+  <script src="js/difficulty-selector.js"></script>
+  <script src="js/achievements.js"></script>
+  <script src="js/backup.js"></script>
+  <script src="js/pause-menu.js"></script>
+  <script src="js/constants.js"></script>
+  <script src="js/settings-manager.js"></script>
+  <script src="js/audio-manager.js"></script>
+  <script src="js/score-manager.js"></script>
+  <script src="js/camera.js"></script>
+  <script src="js/hand-tracking.js"></script>
+  <script src="js/gesture-recognition.js"></script>
+  <script src="js/virtual-cursor.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/fallback-controls.js"></script>
+  <script src="js/game-engine.js"></script>
+  <script src="js/games/puzzle.js"></script>
+  <script src="js/games/target-hunter.js"></script>
+  <script src="js/games/balloon-pop.js"></script>
+  <script src="js/games/air-pong.js"></script>
+  <script src="js/games/memory-hands.js"></script>
+  <script src="js/games/dodge-hand.js"></script>
+  <script src="js/games/air-runner.js"></script>
+  <script src="js/games/air-draw.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

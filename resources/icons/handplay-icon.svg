@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d0d2b"/>
+      <stop offset="100%" style="stop-color:#1a1a3e"/>
+    </linearGradient>
+    <linearGradient id="handGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a5b4fc"/>
+      <stop offset="100%" style="stop-color:#6366f1"/>
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1"/>
+      <stop offset="100%" style="stop-color:#818cf8"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#bgGrad)" stroke="#6366f1" stroke-width="3" opacity="0.95"/>
+  <!-- Outer tech ring -->
+  <circle cx="256" cy="256" r="220" fill="none" stroke="#6366f1" stroke-width="1" opacity="0.2"/>
+  <circle cx="256" cy="256" r="200" fill="none" stroke="#a5b4fc" stroke-width="0.5" opacity="0.15" stroke-dasharray="8 8"/>
+  <!-- Hand shape -->
+  <g transform="translate(256, 260)" filter="url(#glow)">
+    <!-- Palm -->
+    <path d="M0,-80 C-20,-80 -40,-55 -40,-20 L-40,10 L-55,0 C-65,-10 -85,-5 -90,10 C-95,25 -85,45 -70,55 L-65,90 C-65,120 -35,145 5,155 L65,155 C95,145 125,120 125,90 L125,20 C125,5 115,-10 100,-15 C85,-20 80,0 70,15 L55,35 L55,-20 C55,-55 25,-80 0,-80 Z"
+          fill="url(#handGrad)" opacity="0.9"/>
+    <!-- Fingertips with glow -->
+    <circle cx="-40" cy="-50" r="8" fill="#c7d2fe" opacity="0.9"/>
+    <circle cx="0" cy="-82" r="8" fill="#c7d2fe" opacity="0.9"/>
+    <circle cx="-68" cy="10" r="7" fill="#c7d2fe" opacity="0.9"/>
+    <circle cx="125" cy="15" r="7" fill="#c7d2fe" opacity="0.9"/>
+    <!-- Center palm glow -->
+    <circle cx="25" cy="40" r="15" fill="url(#glowGrad)" opacity="0.4">
+      <animate attributeName="r" values="15;20;15" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4;0.7;0.4" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <!-- Detection rings -->
+    <circle cx="0" cy="0" r="180" fill="none" stroke="#6366f1" stroke-width="1.5" opacity="0.3">
+      <animateTransform attributeName="transform" type="rotate" values="0 0 0;360 0 0" dur="10s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="0" cy="0" r="160" fill="none" stroke="#a5b4fc" stroke-width="1" opacity="0.2" stroke-dasharray="6 6">
+      <animateTransform attributeName="transform" type="rotate" values="360 0 0;0 0 0" dur="15s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>
