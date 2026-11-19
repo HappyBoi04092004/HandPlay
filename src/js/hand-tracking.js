@@ -27,6 +27,9 @@ class HandTracking {
   }
 
   _toFileUrl(fsPath) {
+    if (!window.electronAPI) {
+      return fsPath.replace(/\\/g, '/');
+    }
     const normalized = fsPath.replace(/\\/g, '/');
     if (normalized.startsWith('file:///')) return normalized;
     if (normalized.startsWith('file://')) return 'file:///' + normalized.substring(7);
@@ -200,7 +203,11 @@ class HandTracking {
     if (window.electronAPI) {
       return await window.electronAPI.getResourcesPath();
     }
-    return './resources';
+    try {
+      const test = await fetch('./resources/mediapipe/vision_bundle.js', { method: 'HEAD' });
+      if (test.ok) return './resources';
+    } catch (e) {}
+    return '../resources';
   }
 
   async _loadMediaPipeScripts() {

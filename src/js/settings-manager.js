@@ -10,7 +10,16 @@ class SettingsManager {
   }
 
   async init() {
-    const saved = await window.electronAPI?.loadSettings();
+    let saved = null;
+    if (window.electronAPI?.loadSettings) {
+      saved = await window.electronAPI.loadSettings();
+    }
+    if (!saved) {
+      try {
+        const local = localStorage.getItem('handplay_settings');
+        if (local) saved = JSON.parse(local);
+      } catch (e) {}
+    }
     if (saved) {
       this.settings = this._deepMerge(this.settings, saved);
     }
@@ -65,7 +74,12 @@ class SettingsManager {
   }
 
   async _save() {
-    await window.electronAPI?.saveSettings(this.settings);
+    if (window.electronAPI?.saveSettings) {
+      await window.electronAPI?.saveSettings(this.settings);
+    }
+    try {
+      localStorage.setItem('handplay_settings', JSON.stringify(this.settings));
+    } catch (e) {}
   }
 }
 

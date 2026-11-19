@@ -136,7 +136,14 @@ class AirDrawGame extends Game {
     }
 
     const dataUrl = tempCanvas.toDataURL('image/png');
-    await window.electronAPI?.saveImage(dataUrl, 'handplay-drawing.png');
+    if (window.electronAPI?.saveImage) {
+      await window.electronAPI.saveImage(dataUrl, 'handplay-drawing.png');
+    } else {
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = 'handplay-drawing.png';
+      a.click();
+    }
   }
 
   update(dt) {

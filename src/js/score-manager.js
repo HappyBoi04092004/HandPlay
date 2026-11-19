@@ -10,7 +10,16 @@ class ScoreManager {
   }
 
   async init() {
-    const saved = await window.electronAPI?.loadRecords();
+    let saved = null;
+    if (window.electronAPI?.loadRecords) {
+      saved = await window.electronAPI.loadRecords();
+    }
+    if (!saved) {
+      try {
+        const local = localStorage.getItem('handplay_records');
+        if (local) saved = JSON.parse(local);
+      } catch (e) {}
+    }
     if (saved) {
       this.records = saved;
     }
@@ -83,7 +92,12 @@ class ScoreManager {
   }
 
   async _save() {
-    await window.electronAPI?.saveRecords(this.records);
+    if (window.electronAPI?.saveRecords) {
+      await window.electronAPI.saveRecords(this.records);
+    }
+    try {
+      localStorage.setItem('handplay_records', JSON.stringify(this.records));
+    } catch (e) {}
   }
 }
 

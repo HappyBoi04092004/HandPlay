@@ -72,7 +72,11 @@ class AudioManager {
     if (window.electronAPI) {
       return await window.electronAPI.getResourcesPath();
     }
-    return './resources';
+    try {
+      const test = await fetch('./resources/sounds/click.wav', { method: 'HEAD' });
+      if (test.ok) return './resources';
+    } catch (e) {}
+    return '../resources';
   }
 
   async _preloadSounds() {

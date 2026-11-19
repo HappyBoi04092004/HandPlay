@@ -7,12 +7,31 @@
 
 ---
 
-## 🚀 Cách Khởi Động Trò Chơi Nhanh Nhất
+## 🚀 Cách Chơi Trò Chơi
 
-Người dùng có thể khởi chạy trò chơi bằng 1 cú nhấp chuột đơn giản:
+### 1. Dành cho máy tính Windows:
+- **Cách nhanh nhất:** Nhấp đúp vào file **`Chạy HandPlay.bat`** tại thư mục `D:\Game\` (hoặc trong thư mục `HandPlay`).
+- **Hoặc:** Mở trực tiếp file thực thi **`HandPlay-App\HandPlay.exe`**.
 
-1. **Cách 1 (Nhanh nhất):** Nhấp đúp vào file **`Chạy HandPlay.bat`** tại thư mục `D:\Game\` (hoặc trong thư mục `HandPlay`).
-2. **Cách 2:** Mở trực tiếp file thực thi **`D:\Game\HandPlay-App\HandPlay.exe`**.
+### 2. Dành cho Chromebook (ChromeOS) & Trình duyệt Web:
+> ⚠️ **Lưu ý quan trọng**: File `.exe` chỉ dành riêng cho hệ điều hành Windows và **không thể mở trực tiếp trên ChromeOS**.
+> Thay vào đó, HandPlay đã được tối ưu hóa toàn diện để có thể **chơi trực tiếp trên trình duyệt Google Chrome của Chromebook** với đầy đủ tính năng nhận diện cử chỉ MediaPipe!
+
+- **Cách chơi qua GitHub Pages (Không cần cài đặt, khuyến nghị cho Chromebook):**
+  1. Truy cập vào kho GitHub của bạn: `https://github.com/HappyBoi04092004/HandPlay`
+  2. Vào mục **Settings** -> **Pages** (ở cột bên trái).
+  3. Tại mục **Build and deployment** > **Branch**: Chọn nhánh `main` và thư mục `/(root)`, sau đó nhấn **Save**.
+  4. Sau khoảng 1 phút, bạn có thể mở đường link web (dạng `https://happyboi04092004.github.io/HandPlay/`) trên Chromebook, bấm "Bật Camera" (cho phép truy cập webcam) và bắt đầu chơi ngay lập tức!
+
+- **Cách chạy cục bộ (Local Web Server):**
+  Nếu bạn có Node.js hoặc Python trên máy/Chromebook:
+  ```bash
+  # Dùng Node.js
+  npx serve .
+  # Hoặc dùng Python
+  python3 -m http.server 8080
+  ```
+  Sau đó mở trình duyệt truy cập `http://localhost:8080` là chơi được ngay.
 
 ---
 

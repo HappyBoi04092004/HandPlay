@@ -772,7 +772,11 @@ class HandPlayApp {
 
     document.querySelectorAll('.menu-btn[data-action="exit"]').forEach(btn => {
       btn.addEventListener('click', () => {
-        window.electronAPI?.quitApp();
+        if (window.electronAPI?.quitApp) {
+          window.electronAPI.quitApp();
+        } else {
+          window.close();
+        }
       });
     });
   }
@@ -824,7 +828,15 @@ class HandPlayApp {
   }
 
   _toggleFullscreen() {
-    window.electronAPI?.toggleFullscreen();
+    if (window.electronAPI?.toggleFullscreen) {
+      window.electronAPI.toggleFullscreen();
+    } else {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen?.().catch(() => {});
+      } else {
+        document.exitFullscreen?.().catch(() => {});
+      }
+    }
     window.audioManager?.playClick();
   }
 
