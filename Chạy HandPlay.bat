@@ -11,3 +11,4 @@ if exist "%~dp0..\HandPlay-App\HandPlay.exe" (
     npm start
 )
 exit
+
